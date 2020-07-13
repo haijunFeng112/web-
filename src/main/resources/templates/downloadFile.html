@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>文件下载</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+
+</head>
+<body>
+
+
+<table class="table  table-bordered">
+    <tr>
+        <td>文件名</td>
+        <td>文件大小</td>
+        <td>文件上传者</td>
+        <td>上传日期</td>
+        <td>下载次数</td>
+        <td>下 载</td>
+    </tr>
+    <tr th:each="maps:${files}">
+        <td th:text="${maps.getValue().getName()}"></td>
+        <td th:text="${maps.getValue().getSize()/1024}+' KB'"></td>
+        <td th:text="${maps.getValue().getAuthor()}"></td>
+        <td th:text="${maps.getValue().getUploadDate()}"></td>
+        <td th:text="${maps.getValue().getDownloadCount()}"></td>
+        <td ><a id="downbtn" th:href="@{/down(fileName=${maps.getKey()})}" th:text="${maps.getKey()}"></a></td>
+    </tr>
+</table>
+
+<script src="/js/jquery-3.5.0.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    $(function(){
+        downRefresh()
+    })
+    function downRefresh() {
+        $('#downbtn').click(function () {
+
+            setTimeout(function() {
+                location.href= location.href
+            }, 500);
+        })
+    }
+</script>
+
+</body>
+</html>

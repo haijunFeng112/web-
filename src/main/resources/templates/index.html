@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.css">
+    <style>
+        .navbar-default {
+            border-radius: 0;
+        }
+        *{
+            margin: 0;
+            padding: 0;
+        }
+
+        /*#pic{*/
+        /*    width: auto;*/
+        /*    height: 800px;*/
+        /*}*/
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-default">
+    <div class="container">
+
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">文件管理系统</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div th:switch="${session.username==null}" class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul th:case="true" class="nav navbar-nav navbar-right">
+
+                <li><a data-toggle="modal" data-target="#loginModel">登 录</a></li>
+                <li><a data-toggle="modal" data-target="#registerModel" href="#">注 册</a></li>
+
+            </ul>
+            <ul th:case="false" class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a th:text="${session.username}" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/downloadFile">下载文件</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/logout">退出</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+
+<div class="modal fade" id="loginModel" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">用户登录</h4>
+            </div>
+            <div class="modal-body">
+                <!--                <p>One fine body&hellip;</p>-->
+                <form>
+                    <div class="form-group">
+                        <label for="exampleInputUsername">用户名</label>
+                        <input type="text" class="form-control" id="exampleInputUsername" placeholder="用户名">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">密码</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="密码">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="loginBtn" type="button" class="btn btn-primary">确 认</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="registerModel" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title">用户注册</h4>
+            </div>
+            <div class="modal-body">
+                <!--                <p>One fine body&hellip;</p>-->
+
+                <form>
+                    <div class="form-group">
+                        <label for="exampleInputUsername2">用户名</label>
+                        <input type="text" class="form-control" id="exampleInputUsername2" placeholder="用户名">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword2">密码</label>
+                        <input type="password" class="form-control" id="exampleInputPassword2" placeholder="密码">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取 消</button>
+                <button id="registerBtn" type="button" class="btn btn-primary">确 认</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div th:switch="${session.username==null}">
+    <div th:case="true" class="jumbotron">
+        <h1>Hello, world!</h1>
+        <p>请登录进入使用</p>
+        <p></p>
+    </div>
+    <div th:case="false" class="form-group">
+        <h1 th:inlines="text">文件上传</h1>
+        <form action="fileUpload" method="post" enctype="multipart/form-data">
+            <p>选择文件: <input type="file" name="fileName"/></p>
+            <p><input type="submit"  class="btn btn-default" value="上传"/></p>
+        </form>
+    </div>
+</div>
+
+
+
+<script src="/js/jquery-3.5.0.min.js"></script>
+<script src="/bootstrap/js/bootstrap.min.js"></script>
+<script>
+    $(function () {
+        bindSubmit()
+        registerSubmit()
+    })
+
+    function bindSubmit() {
+        $('#loginBtn').click(function () {
+            var username = $("#exampleInputUsername").val()
+            var password = $("#exampleInputPassword1").val()
+            console.log(username + "..." + password)
+            $.ajax({
+                url: "/login",
+                type: 'POST',
+                async: true,
+                data: {'username': username, 'password': password},
+                success: function (res) {
+                    console.log(res)
+                    if (res.status) {
+                        $(location).attr('href', '/');
+                        alert("登录成功")
+                    } else {
+                        $(location).attr('href', '/');
+                        alert(res.msg)
+                    }
+
+
+                }
+            })
+        })
+    }
+
+    function registerSubmit() {
+        $('#registerBtn').click(function () {
+            var name = $("#exampleInputUsername2").val()
+            var passwd = $("#exampleInputPassword2").val()
+            console.log(name + "..." + passwd)
+            $.ajax({
+                url: "/register",
+                type: 'POST',
+                async: true,
+                data: {'username': name, 'password': passwd},
+                success: function (res) {
+                    console.log(res)
+                    if (res.status) {
+                        $(location).attr('href', '/');
+                        alert("注册成功")
+                    } else {
+
+                        $(location).attr('href', '/');
+                        alert(res.msg)
+                    }
+
+
+                }
+            })
+        })
+    }
+
+
+</script>
+</body>
+</html>
